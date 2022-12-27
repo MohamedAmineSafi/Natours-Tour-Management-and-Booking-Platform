@@ -20,6 +20,26 @@ app.get('/api/v1/tours', (req, res) => {
   });
 });
 
+app.get('/api/v1/tours/:id', (req, res) => {
+  // If we use :id? it becomes an optional parameter
+  const id = req.params.id * 1; // Convert string to number ????? (trick)
+  if (id > tours.length) {
+    return res.status(404).json({
+      //we user return to exit the function
+      status: 'fail',
+      message: 'invalid Id',
+    });
+  }
+  const tour = tours.find((el) => el.id === id); // Returns an array where el.id === id
+
+  res.status(200).json({
+    status: 'success',
+    data: {
+      tour,
+    },
+  });
+});
+
 app.post('/api/v1/tours', (req, res) => {
   // Don't forget the '/' before 'api'
   const newId = tours[tours.length - 1].id + 1;
