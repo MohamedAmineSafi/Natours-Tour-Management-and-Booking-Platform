@@ -1,15 +1,21 @@
 const express = require('express');
+const fs = require('fs');
 const app = express();
 
-app.get('/', (req, res) => {
-  res.status(200).json({
-    message: 'Hi and Welcome!',
-    app: 'Natours',
-  });
-});
+// Top Level Code (Run once ONLY) (can have blocking code)
+const tours = JSON.parse(
+  fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
+);
 
-app.post('/', (req, res) => {
-  res.send('Ohhh Yeah!');
+// Event Loop
+app.get('/api/v1/tours', (req, res) => {
+  res.status(200).json({
+    status: 'success',
+    results: tours.length,
+    data: {
+      tours, //Key-Value are the same same (so you don't have to repeat it)
+    },
+  });
 });
 
 const port = 8000;
