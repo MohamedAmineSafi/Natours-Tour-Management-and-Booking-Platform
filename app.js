@@ -1,14 +1,16 @@
 const express = require('express');
 const fs = require('fs');
+const morgan = require('morgan');
 
 const app = express();
-app.use(express.json()); // Middleware (to get data from post request) (req.body)
 
+// Middleware
+app.use(morgan('dev'));
+app.use(express.json()); // Middleware (to get data from post request) (req.body)
 app.use((req, res, next) => {
   console.log('Hello Hello');
   next(); // DON'T FORGET
 });
-
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
@@ -105,6 +107,7 @@ const deleteTour = (req, res) => {
   });
 };
 
+// Routes
 app.route('/api/v1/tours').get(getAllTours).post(createTour);
 app
   .route('/api/v1/tours/:id')
@@ -112,6 +115,7 @@ app
   .patch(updateTour)
   .delete(deleteTour);
 
+// Start Server
 const port = 8000;
 app.listen(port, () => {
   console.log(`App Running on port ${port}...`);
