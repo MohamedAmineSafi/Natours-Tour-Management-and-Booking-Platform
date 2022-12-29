@@ -4,6 +4,16 @@ const fs = require('fs');
 const app = express();
 app.use(express.json()); // Middleware (to get data from post request) (req.body)
 
+app.use((req, res, next) => {
+  console.log('Hello Hello');
+  next(); // DON'T FORGET
+});
+
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString();
+  next();
+});
+
 // Top Level Code (Run once ONLY) (can have blocking code)
 const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/dev-data/data/tours-simple.json`)
@@ -11,8 +21,10 @@ const tours = JSON.parse(
 
 // Event Loop
 const getAllTours = (req, res) => {
+  console.log(req.requestTime);
   res.status(200).json({
     status: 'success',
+    requestedAt: req.requestTime,
     results: tours.length,
     data: {
       tours, //Key-Value are the same same (so you don't have to repeat it)
