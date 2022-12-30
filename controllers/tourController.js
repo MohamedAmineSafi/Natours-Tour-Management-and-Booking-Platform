@@ -4,6 +4,18 @@ const tours = JSON.parse(
   fs.readFileSync(`${__dirname}/../dev-data/data/tours-simple.json`)
 );
 
+exports.checkId = (req, res, next, val) => {
+  console.log(`Tour id is ${val}`);
+  if (val > tours.length) {
+    return res.status(404).json({
+      //we user return to exit the function
+      status: 'fail',
+      message: 'invalid Id',
+    });
+  }
+  next();
+};
+
 exports.getAllTours = (req, res) => {
   console.log(req.requestTime);
   res.status(200).json({
@@ -18,14 +30,7 @@ exports.getAllTours = (req, res) => {
 
 exports.getTour = (req, res) => {
   // If we use :id? it becomes an optional parameter
-  const id = req.params.id * 1; // Convert string to number ????? (trick)
-  if (id > tours.length) {
-    return res.status(404).json({
-      //we user return to exit the function
-      status: 'fail',
-      message: 'invalid Id',
-    });
-  }
+  const id = req.params.id * 1;
   const tour = tours.find((el) => el.id === id); // Returns an array where el.id === id
 
   res.status(200).json({
@@ -56,15 +61,6 @@ exports.createTour = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-  const id = req.params.id * 1;
-  if (id > tours.length) {
-    return res.status(404).json({
-      //we user return to exit the function
-      status: 'fail',
-      message: 'invalid Id',
-    });
-  }
-
   res.status(200).json({
     status: 'success',
     data: {
@@ -74,15 +70,6 @@ exports.updateTour = (req, res) => {
 };
 
 exports.deleteTour = (req, res) => {
-  const id = req.params.id * 1;
-  if (id > tours.length) {
-    return res.status(404).json({
-      //we user return to exit the function
-      status: 'fail',
-      message: 'invalid Id',
-    });
-  }
-
   res.status(204).json({
     status: 'success',
     data: null,
