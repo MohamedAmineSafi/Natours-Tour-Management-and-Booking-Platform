@@ -7,7 +7,9 @@ const userRouter = require('./routes/userRoutes');
 const app = express();
 
 // Middleware
-app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'));
+}
 app.use(express.json()); // Middleware (to get data from post request) (req.body)
 
 app.use(express.static(`${__dirname}/public`)); // sets public as a root folder (localhost/overview.html)
