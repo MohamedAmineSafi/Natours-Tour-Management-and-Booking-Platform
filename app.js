@@ -9,6 +9,9 @@ const app = express();
 // Middleware
 app.use(morgan('dev'));
 app.use(express.json()); // Middleware (to get data from post request) (req.body)
+
+app.use(express.static(`${__dirname}/public`)); // sets public as a root folder (localhost/overview.html)
+
 app.use((req, res, next) => {
   console.log('Hello Hello');
   next(); // DON'T FORGET
