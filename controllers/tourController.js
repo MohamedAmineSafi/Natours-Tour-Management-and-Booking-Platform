@@ -61,13 +61,26 @@ exports.createTour = async (req, res) => {
   }
 };
 
-exports.updateTour = (req, res) => {
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour: '<Updated tour here...>',
-    },
-  });
+exports.updateTour = async (req, res) => {
+  // This is a PATCH request which means that some (not all) of the object will be replaced. If this was a PUT request the same code will replace the entire object
+  try {
+    const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
+      new: true, //The 'new: true' option in the findByIdAndUpdate() method tells Mongoose to return the updated document to you, rather than the original document.
+      runValidators: true, //IMPORTANT
+    });
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        tour,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: 'failed',
+      message: 'Invalid Data Sent',
+    });
+  }
 };
 
 exports.deleteTour = (req, res) => {
