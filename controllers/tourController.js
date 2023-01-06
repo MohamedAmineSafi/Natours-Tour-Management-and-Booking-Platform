@@ -15,14 +15,16 @@ exports.getAllTours = async (req, res) => {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
     // queryStr is { duration: { '$gte': '5' }, difficulty: 'easy' }
-    const query = Tour.find(JSON.parse(queryStr));
+    let query = Tour.find(JSON.parse(queryStr));
 
-    // CAN DO IT LIKE THIS TOO:
-    // const query = Tour.find()
-    //   .where('duration')
-    //   .equals(5)
-    //   .where('difficulty')
-    //   .equals('easy');
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(',').join(' ');
+      // http://localhost:8000/api/v1/tours?sort=price,ratingsAverage
+      // http://localhost:8000/api/v1/tours?sort=-price,ratingsAverage
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');
+    }
 
     const tours = await query;
 
