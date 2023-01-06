@@ -11,7 +11,11 @@ exports.getAllTours = async (req, res) => {
     excludedFields.forEach((el) => delete queryObj[el]);
 
     // console.log(req.query); Gives access to url query like example.com/?key=value
-    const query = Tour.find(queryObj);
+    // req url: http://localhost:8000/api/v1/tours?duration[gte]=5&difficulty=easy&page=2
+    let queryStr = JSON.stringify(queryObj);
+    queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
+    // queryStr is { duration: { '$gte': '5' }, difficulty: 'easy' }
+    const query = Tour.find(JSON.parse(queryStr));
 
     // CAN DO IT LIKE THIS TOO:
     // const query = Tour.find()
