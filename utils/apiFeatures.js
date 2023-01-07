@@ -1,4 +1,12 @@
 class APIFeatures {
+  /*
+  In this code, the 'return this' statement appears at the end of each method.
+  It is used to enable method chaining for the APIFeatures class.
+  This means that you can call multiple methods on the same instance of the APIFeatures class in a single line of code
+  
+  The return this statement at the end of each method ensures that the modified this.query object is returned after each method is called,
+  so that it can be used as the input for the next method in the chain.
+  */
   constructor(query, queryString) {
     this.query = query;
     this.queryString = queryString;
