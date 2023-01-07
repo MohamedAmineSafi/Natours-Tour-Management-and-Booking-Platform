@@ -23,9 +23,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Top Level Code (Run once ONLY) (can have blocking code)
-// Event Loop
-
 // Routes
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
