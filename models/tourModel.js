@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const slugify = require('slugify');
 
 const toursSchema = new mongoose.Schema(
   {
@@ -53,6 +54,7 @@ const toursSchema = new mongoose.Schema(
       select: false, // Hides 'createdAt'
     },
     startDates: [Date], //An Array of Dates
+    slug: String,
   },
   {
     // To Show the virtual props
@@ -63,6 +65,18 @@ const toursSchema = new mongoose.Schema(
 
 toursSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7; // 'this' is the schema (current document) also we use regular function cause we need 'this'
+});
+
+// Document Middleware (or Hook)
+toursSchema.pre('save', function (next) {
+  // will be called before a document gets saved using .save() and .create() only
+  this.slug = slugify(this.name, { lower: true });
+  next();
+});
+
+toursSchema.post('save', function (doc, next) {
+  console.log(doc);
+  next();
 });
 
 const Tour = mongoose.model('Tour', toursSchema); // Uppercase for model name
