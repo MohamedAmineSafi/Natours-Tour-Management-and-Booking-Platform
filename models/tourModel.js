@@ -55,6 +55,10 @@ const toursSchema = new mongoose.Schema(
     },
     startDates: [Date], //An Array of Dates
     slug: String,
+    secretTour: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     // To Show the virtual props
@@ -74,8 +78,24 @@ toursSchema.pre('save', function (next) {
   next();
 });
 
-toursSchema.post('save', function (doc, next) {
-  console.log(doc);
+// toursSchema.post('save', function (doc, next) {
+//   console.log(doc);
+//   next();
+// });
+
+// Query Middleware
+// toursSchema.pre('find', function (next) {
+toursSchema.pre(/^find/, function (next) {
+  // All the commands that start with find
+  this.find({ secretTour: { $ne: true } });
+  this.start = Date.now();
+  next();
+});
+
+toursSchema.post(/^find/, function (docs, next) {
+  // 'this' is for the query
+  console.log(`Query took ${Date.now() - this.start} ms`);
+  console.log(docs);
   next();
 });
 
