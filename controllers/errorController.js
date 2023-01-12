@@ -41,7 +41,10 @@ module.exports = (err, req, res, next) => {
     sendErrorDev(err, res);
   } else if (process.env.NODE_ENV === 'production') {
     let error = { ...err };
-    if (error.name == 'CastError') error = handleCastErrorDB(error);
+    // Line 45 is my own. For some reason let error = { ...err }; is not working properly since we are
+    // losing the 'name' property
+    let errorName = err.name;
+    if (errorName == 'CastError') error = handleCastErrorDB(error);
     sendErrorProd(error, res);
   }
 };
