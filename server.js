@@ -1,9 +1,16 @@
+// Must be on the top
+process.on('uncaughtException', (err) => {
+  console.log('Uncaught Exception. Shutting Down...');
+  console.log(err);
+  process.exit(1); // A Must
+});
+
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 dotenv.config({ path: './config.env' }); // Before 'const app'
 const app = require('./app');
 
-process.env.NODE_ENV = 'production';
+// process.env.NODE_ENV = 'production';
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
@@ -26,11 +33,11 @@ const server = app.listen(port, () => {
 });
 
 process.on('unhandledRejection', (err) => {
-  console.log(err.name, err.message);
   console.log('Unhandled Rejection. Shutting Down...');
+  console.log(err);
 
   // To shutdown gracefully
   server.close(() => {
-    process.exit(1);
+    process.exit(1); // Optional
   });
 });
