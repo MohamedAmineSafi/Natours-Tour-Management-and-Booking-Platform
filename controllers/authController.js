@@ -52,3 +52,26 @@ exports.login = catchAsync(async (req, res, next) => {
     token,
   });
 });
+
+exports.protect = catchAsync(async (req, res, next) => {
+  // 1) Get the JWT
+  let token; // We do this to avoid block scoping
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1]; // We do this to avoid block scoping
+  }
+
+  if (!token) {
+    return next(new AppError('You are not logged in', 401));
+  }
+
+  // 2) Validate the JWT
+
+  // 3) Check if user still exists
+
+  // 4) Check if user changed password after JWT was issued
+
+  next();
+});
