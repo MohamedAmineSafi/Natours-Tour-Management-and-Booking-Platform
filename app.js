@@ -1,5 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
+const rateLimit = require('express-rate-limit');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -13,6 +14,14 @@ const app = express();
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
+
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP',
+});
+app.use('/api', limiter); // apply only to /api
+
 app.use(express.json()); // Middleware (to get data from post request) (req.body)
 
 app.use(express.static(`${__dirname}/public`)); // sets public as a root folder (localhost/overview.html)
