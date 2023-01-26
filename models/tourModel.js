@@ -118,6 +118,13 @@ toursSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7; // 'this' is the schema (current document) also we use regular function cause we need 'this'
 });
 
+// Virtual Populate
+toursSchema.virtual('reviews', {
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
+});
+
 // Document Middleware (or Hook)
 toursSchema.pre('save', function (next) {
   // will be called before a document gets saved using .save() and .create() only
