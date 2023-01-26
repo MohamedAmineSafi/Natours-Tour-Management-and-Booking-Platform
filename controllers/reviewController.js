@@ -14,7 +14,11 @@ exports.getAllReviews = catchAsync(async (req, res, next) => {
 });
 
 exports.createReview = catchAsync(async (req, res, next) => {
-  const newReview = await Review.create(req.body); // safe because it will follow the schema
+  // Nested Routes
+  if (!req.body.tour) req.body.tour = req.params.tourId;
+  if (!req.body.user) req.body.user = req.user.id;
+
+  const newReview = await Review.create(req.body);
   res.status(201).json({
     status: 'success',
     data: {
