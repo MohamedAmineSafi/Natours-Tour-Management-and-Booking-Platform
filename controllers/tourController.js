@@ -45,49 +45,8 @@ exports.getTour = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.createTour = catchAsync(async (req, res, next) => {
-  newTour = await Tour.create(req.body); //Returns a promise
-  res.status(201).json({
-    status: 'success',
-    data: {
-      tour: newTour,
-    },
-  });
-});
-
-exports.updateTour = catchAsync(async (req, res, next) => {
-  const tour = await Tour.findByIdAndUpdate(req.params.id, req.body, {
-    new: true, //The 'new: true' option in the findByIdAndUpdate() method tells Mongoose to return the updated document to you, rather than the original document.
-    runValidators: true, //IMPORTANT
-  });
-
-  if (!tour) {
-    // use return to stop the code
-    return next(new AppError('No Tour Found with that Id', 404));
-  }
-
-  res.status(200).json({
-    status: 'success',
-    data: {
-      tour,
-    },
-  });
-});
-
-// exports.deleteTour = catchAsync(async (req, res, next) => {
-//   const tour = await Tour.findByIdAndDelete(req.params.id); //Don't forget 'await'
-
-//   if (!tour) {
-//     // use return to stop the code
-//     return next(new AppError('No Tour Found with that Id', 404));
-//   }
-
-//   res.status(204).json({
-//     status: 'success',
-//     data: null,
-//   });
-// });
-
+exports.createTour = factory.createOne(Tour);
+exports.updateTour = factory.updateOne(Tour);
 exports.deleteTour = factory.deleteOne(Tour);
 
 exports.getTourStats = catchAsync(async (req, res, next) => {
