@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Tour = require('./../models/tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -39,6 +40,43 @@ reviewSchema.pre(/^find/, function (next) {
     select: 'name photo',
   });
   next();
+});
+
+// statics NOT static
+reviewSchema.statics.calcAverageRatings = async function (tourId) {
+  // this refers to the model
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourId },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRating: { $sum: 1 },
+        avgRating: { $avg: '$rating' },
+      },
+    },
+  ]);
+
+  await Tour.findByIdAndUpdate(tourId, {
+    ratingsQuantity: stats[0].nRating,
+    ratingsAverage: stats[0].avgRating,
+  });
+};
+
+// post does not have next
+reviewSchema.post('save', function () {
+  /* this points to current review
+  this refers to the current object, in this case it is a review document.
+  this.constructor refers to the model (i.e. Review) the review document was created
+  from. In other words, this.constructor is the class (model) that created the object
+  (review) this.
+
+  So, this.constructor.calcAverageRatings(this.tour) is calling the static method
+  calcAverageRatings on the Review model, with the tour property of the
+  current review as an argument.
+  */
+  this.constructor.calcAverageRatings(this.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
