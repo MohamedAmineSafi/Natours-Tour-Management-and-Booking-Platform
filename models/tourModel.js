@@ -162,10 +162,10 @@ toursSchema.post(/^find/, function (docs, next) {
 });
 
 // Aggregation Middleware
-toursSchema.pre('aggregate', function (next) {
-  this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
-  next();
-});
+// toursSchema.pre('aggregate', function (next) {
+//   this.pipeline().unshift({ $match: { secretTour: { $ne: true } } });
+//   next();
+// });
 
 const Tour = mongoose.model('Tour', toursSchema); // Uppercase for model name
 
