@@ -22,9 +22,7 @@ exports.getTour = catchAsync(async (req, res, next) => {
     path: 'reviews',
     fields: 'review rating user',
   });
-  // const guides = tour.guides;
   res.status(200).render('tour', {
     tour,
-    // guides,
   });
 });
