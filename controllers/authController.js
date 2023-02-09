@@ -68,6 +68,14 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  res.cookie('jwt', 'logged out!', {
+    expires: new Date(Date.now() + 10 * 1000),
+    httpOnly: true,
+  });
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Get the JWT
   let token; // We do this to avoid block scoping
@@ -103,29 +111,33 @@ exports.protect = catchAsync(async (req, res, next) => {
   next();
 });
 
-exports.isLoggedIn = catchAsync(async (req, res, next) => {
+exports.isLoggedIn = async (req, res, next) => {
   if (req.cookies.jwt) {
-    const decoded = await promisify(jwt.verify)(
-      req.cookies.jwt,
-      process.env.JWT_SECRET
-    );
+    try {
+      const decoded = await promisify(jwt.verify)(
+        req.cookies.jwt,
+        process.env.JWT_SECRET
+      );
 
-    const freshUser = await User.findById(decoded.id);
-    if (!freshUser) {
+      const freshUser = await User.findById(decoded.id);
+      if (!freshUser) {
+        return next();
+      }
+
+      if (freshUser.changedPasswordAfter(decoded.iat)) {
+        return next();
+      }
+
+      // grant access
+      res.locals.user = freshUser;
+      // req.user = freshUser;
+      return next(); // dont forget return so that next() doesnt get called twice
+    } catch (err) {
       return next();
     }
-
-    if (freshUser.changedPasswordAfter(decoded.iat)) {
-      return next();
-    }
-
-    // grant access
-    res.locals.user = freshUser;
-    // req.user = freshUser;
-    return next(); // dont forget return so that next() doesnt get called twice
   }
   next();
-});
+};
 
 exports.restrictTo = (...roles) => {
   return (req, res, next) => {
