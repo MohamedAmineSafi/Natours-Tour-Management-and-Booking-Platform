@@ -36,6 +36,7 @@ const limiter = rateLimit({
 app.use('/api', limiter); // apply only to /api
 
 app.use(express.json({ limit: '10kb' })); // limit body to 10kb
+app.use(express.urlencoded({ extended: true, limit: '10kb' })); // allow POST reqs from forms
 app.use(cookieParser());
 
 // Data Sanitization against query injection
