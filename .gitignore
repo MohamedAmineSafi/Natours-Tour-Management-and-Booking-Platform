@@ -105,3 +105,4 @@ dist
 
 .node_modules/
 .vscode/
+config.env
